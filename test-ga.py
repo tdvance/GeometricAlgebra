@@ -82,9 +82,18 @@ for iter in range(100):
     z = random_multivector()
     asserteq((x*y)*z, x*(y*z))
     asserteq(x*y, x @ y + (x & y))
+    asserteq(x+y, y+x)
+    asserteq(x+(y+z), (x+y)+z)
+    asserteq(x+y - y, x)
     asserteq(2*x, x+x)
-
+    asserteq(0*x, ga.scalar(0))
+    asserteq(1*x, x)
+    asserteq(-1*x, -x)
+    asserteq(x-y, -(y-x))
+    asserteq(x+0, x)
+    asserteq(0+x, x)    
     a = random_scalar()
+    asserteq(a*x, x*a)
     b = random_scalar()
     c = random_scalar()
     d = random_scalar()
@@ -106,4 +115,66 @@ for iter in range(100):
     except(TypeError, ZeroDivisionError):
         pass    
     
-   
+
+def signum(l):
+    s = 1
+    for i in range(len(l)):
+        for j in range(len(l)-1, i, -1):
+            if l[j] < l[j-1]:
+                x = l[j-1]
+                l[j-1] = l[j]
+                l[j] = x
+                s = -s
+    return s
+                        
+
+assert signum([1,2,3,6,12]) == 1
+assert signum([1,2,6,3,12]) == -1
+
+def dedup(l):
+    x = []
+    for v in l:
+        if x and x[-1] == v:
+            x.pop()
+        else:
+            x.append(v)
+    return x
+
+def blade_to_list(x):
+    if not x:
+        return []
+    if len(x) > 1:
+        return NotImplemented
+    j = -1
+    for i in x:
+#        print('btol:',i, x[i])
+        j = bin(i)[2:]
+        l = [len(j) - i for i in range(len(j)) if j[i] == '1']
+        l.reverse()
+        return l
+        
+for iter in range(100):
+    x = random_blade()
+    y = random_blade()
+    l = blade_to_list(x) + blade_to_list(y)
+    s = signum(l)
+    l = dedup(l)
+    z = x*y
+    assert blade_to_list(z) == l
+    for i in z:
+        assert z[i] == s
+    
+    a = random_blade()
+    b = random_blade()
+    c = random_blade()
+    a1 = random_blade()
+    b1 = random_blade()
+    c1 = random_blade()
+
+    x = a+2*b-c + 3
+    y = 2*a -b - 2*c
+    z = x*y
+    zz = a*2*a - a*b - a*2*c +2*b*2*a - 2*b*b -2*b*2*c - c*2*a + c*b + c*2*c + 3*2*a - 3*b - 3*2*c
+    assert z == zz
+
+    
