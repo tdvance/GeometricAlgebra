@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import math
 from numbers import Number
 
 class MultiVector:
@@ -108,7 +109,7 @@ geometric algebra.
         """
         x = MultiVector(self.dim)
         for i in range(len(self._data)):
-            x._data[i] = self._data[i]
+            x._data[i] = -self._data[i]
         return x
 
     def __float__(self):
@@ -173,14 +174,16 @@ geometric algebra.
     def __rmul__(self, other):
         if isinstance(other, Number):
             return self*other
-        return other*self
+        if isinstance(other, MultiVector):
+            return other*self
+        return NotImplemented
     
     def __and__(self, other):
         """Find the outer (wedge) product of the two multivectors, or of a multivector
         and a number.
 
         """        
-        x = self*other - other.self
+        x = self*other - other*self
         for i in range(len(x._data)):
             x._data[i] /= 2
         return x
@@ -190,7 +193,7 @@ geometric algebra.
         and a number.
 
         """                
-        x = self*other + other.self
+        x = self*other + other*self
         for i in range(len(x._data)):
             x._data[i] /= 2
         return x
