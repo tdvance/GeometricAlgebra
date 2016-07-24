@@ -250,14 +250,15 @@ can be computed as follows:
 \item Let $s$ be 1.
 \item Let $p$ be the maximum of $\n(a)$ and $\n(b)$.
 \item Let $d$ be $m$
-\item Let $d$ be $1$
-\item while $d\le{p}$, do the following:
+\item Let $e$ be $1$
+\item while $e\le{p}$, do the following:
   \begin{enumerate}
-  \item Compute the bitwise and of $d$ and $\n(a)$.
+  \item Compute the bitwise and of $e$ and $\n(a)$.
   \item If the result of the bitwise and is nonzero, then replace $d$ with $d-1$.
-  \item Compute the bitwise and of $d$ and $\n(b)$.
-  \item If the result of the bitwise and is nonzero and if $d$ is odd,
+  \item If $d$ is odd, Compute the bitwise and of $e$ and $\n(b)$.
+  \item If $d$ is odd and the result of the bitwise and is nonzero
     then replace $s$ with $-s$.
+  \item Replace $e$ with $2e$.
   \end{enumerate}
 \item Let $c$ be the multivector that is the real coefficient $s$
   multiplied by the blade given by $c$, and return $c$.
