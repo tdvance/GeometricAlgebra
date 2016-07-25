@@ -3,6 +3,7 @@
 import math
 from numbers import Number
 
+
 class MultiVector:
     """
     MultiVector(dim) -> the (mutable) zero multivector in GA(dim), for dim >= 0
@@ -32,7 +33,7 @@ must be from 0 to 2**dim - 1.
         return self._data[i]
 
     def __setitem__(self, i, coef):
-        """Det the ith coefficient, where the bits of i illustrate the
+        """Set the ith coefficient, where the bits of i illustrate the
 standard basis blade to set.  For example, 11 = 8+2+1 = 2**3 + 2**1 +
 2**0, so x[11]=1.2 sets the coefficient of [4,2,1] in x to 1.2,
 overwriting any coefficient already there.  The index i must be from 0
@@ -146,7 +147,7 @@ geometric algebra.
     def __sub__(self, other):
         """
         Subtract the two multivectors, or a multivector and a number.
-        """        
+        """
         return self + (-other)
 
     def __rsub__(self, other):
