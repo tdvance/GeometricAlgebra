@@ -302,7 +302,6 @@ sum of the products of corresponding coefficients of v and w.
         x = sum(x*x for x in self)
         return math.sqrt(x)
 
-
     def cross_product(self, other):
         """v.cross_product(w) is only defined if len(v)==len(w)==3.  It is
 then the geometric cross product of the vectors, producing the unique
@@ -325,6 +324,36 @@ w.
             raise NotImplementedError("dimension %d != 3" %(len(other), 3))
         return Vector(3, self.y*other.z - self.z*other.y, self.z*other.x - self.x*other.z, self.x*other.y - self.y*other.x)
 
+    def to_cylindrical(self):
+        """
+        Return (r, theta, z), the cylindrical coordinates of this 3d vector.
+
+        >>> v = Vector(3, 1, 1, 0)
+        >>> v.to_cylindrical()
+        (1.4142135623730951, 0.7853981633974483, 0.0)
+        """
+        theta = math.atan2(self.y, self.x)
+        r = math.sqrt(self.x*self.x + self.y*self.y)
+        return (r, theta, self.z)
+
+    def to_spherical(self):
+        """Return (r, phi, theta), the spherical coordinates of this 3d
+        vector, where the north pole is phi=0, and the south pole is
+        phi=math.pi.
+
+        >>> v = Vector(3, 1, 1, 0)
+        >>> v.to_spherical()
+        (1.4142135623730951, 1.5707963267948966, 0.7853981633974483)
+
+        """        
+        rho = math.sqrt(self.x*self.x + self.y*self.y + self.z*self.z)
+        theta = math.atan2(self.y, self.x)
+        if rho:
+            phi = math.acos(self.z/rho)
+        else:
+            phi = 0
+        return (rho, phi, theta)
+    
     def __str__(self):
         return str(self.as_tuple())
 
@@ -402,7 +431,31 @@ less than pi.
 
         """
         return Vector(len(self), [0]*(i-1) + [1])
-        
+
+    @classmethod
+    def from_spherical(cls, rho, phi, theta):
+        """
+        Return (r, theta, z), the spherical coordinates of this 3d vector.
+        >>> Vector.from_spherical(1.4142135623730951, 1.5707963267948966, 0.7853981633974483)
+        Vector(3, 1.0000000000000002, 1.0, 1.0000000000000002)
+        """        
+        s = math.sin(phi)
+        x = rho*s*math.cos(theta)
+        y = rho*s*math.sin(theta)
+        z = rho*math.cos(theta)
+        return Vector(3, x, y, z)
+
+    @classmethod
+    def from_cylindrical(cls, r, theta, z):
+        """
+        Return (r, theta, z), the cylindrical coordinates of this 3d vector.
+        >>> Vector.from_cylindrical(1.4142135623730951 , 0.7853981633974483, 0)
+        Vector(3, 1.0000000000000002, 1.0, 0.0)
+        """                
+        x = r*math.cos(theta)
+        y = r*math.sin(theta)
+        return Vector(3, x, y, z)
+    
 if __name__ == '__main__':
     import doctest
     doctest.testmod()
