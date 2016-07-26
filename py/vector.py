@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 
+import sys
+sys.path.append('./py')
+
 from collections import Iterable
 import math
 import operator
 
 class Vector:
-    """Vectors are immutable.  Coordiantes are 1-up, in keeping with
+    """Vectors are immutable.  Coordinates are 1-up, in keeping with
 mathematical usage though against common computer programming usage.
 
     Vector(n_int) -> zero vector in n-dimensional space.

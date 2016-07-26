@@ -1,7 +1,13 @@
 #!/usr/bin/env python3
+
+import sys
+sys.path.append('./py')
+
+from tests.test import *
+from tests.random import *
+
 from ga import GA
 from multivector import MultiVector
-import random
 
 ga = GA(3)
 assert ga.n == 3
@@ -25,47 +31,6 @@ assert e1.cross_product(e2) == e3
 assert e2.cross_product(e3) == e1
 assert e3.cross_product(e1) == e2
 
-def random_scalar(n=3):
-    if random.randint(0,100) < 33:
-        return GA(n).scalar(random.randint(-5, 5))
-    return GA(n).scalar(random.gauss(0, 20))
-
-def random_vector(n=3):
-    bit = 1
-    x = GA(n).scalar(0)
-    while bit < len(x):
-        x[bit] = random_scalar(n)
-        bit *= 2
-    return x
-
-def random_rank():
-    return random.randint(0, 3)
-
-def random_blade(n=3):
-    x = GA(n).scalar(0)
-    i = random.randint(0, 2**n - 1)
-    x._data[i] = 1.0
-    return x
-
-def random_len():
-    if random.randint(0,100) < 2:
-        return 0
-    return random.randint(1, 2**3 - 1)    
-
-def random_multivector(n=3):
-    x = GA(n).scalar(0)
-    l = random_len()
-    for i  in range(l):
-        x += random_scalar(n)*random_blade(n)
-    return x
-
-def asserteq(a, b):
-    if a!=b:
-        if abs(a - b) > 1E-10:
-            print('a=', a)
-            print('b=', b)
-            print('diff=', abs(a-b))
-            assert(a==b)
 
 i = ga.blade(1,2,3)
 j = ga.blade(1,1,3)

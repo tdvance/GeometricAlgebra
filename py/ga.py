@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
+import sys
+sys.path.append('./py')
+
 from numbers import Number
 
+from vector import Vector
 from multivector import MultiVector
 
 class GA:
@@ -79,6 +83,47 @@ better interface."""
             return self.blade(1.0, *index)
         return self.blade(1.0, index)
 
+    @classmethod
+    def mv_from_vector(cls, v):
+        """
+        Create a multivector from a vector.
+
+        >>> v = Vector(3, 1, 0, -1)
+        >>> x = GA.mv_from_vector(v)
+        >>> x
+        1.0*GA(3)[1] + -1.0*GA(3)[3]
+        """
+
+        x = MultiVector(len(v))
+        bit = 1
+        i = 1
+        while bit < len(x._data):
+            x[bit] = v[i]
+            i += 1
+            bit *= 2
+        return x
+
+    @classmethod
+    def vector_from_mv(cls, x):
+        """Create a vector from a multivector, raising an exception if it has
+        non-rank-one terms.
+
+        >>> x = GA(3)[1] - GA(3)[3]
+        >>> v = GA.vector_from_mv(x)
+        >>> str(v)
+        '(1.0, 0.0, -1.0)'
+
+        """        
+        n = x.dim
+        l = [0.0]*n
+        bit = 1
+        i = 0
+        while bit < len(x._data):
+            l[i] = x[bit]
+            i += 1
+            bit *= 2
+        return Vector(n, l)    
+        
 
 if __name__ == '__main__':
     import doctest
