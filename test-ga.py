@@ -18,10 +18,25 @@ xx =ga2.coerce_multivector(x)
 assert x != xx
 assert xx == ga2.scalar(4) + ga2.blade(3, 1) + ga2.blade(4, 2) + ga2.blade(5, 1, 2)
 
+e1 = ga[1]
+e2 = ga[2]
+e3 = ga[3]
+assert e1.cross_product(e2) == e3
+assert e2.cross_product(e3) == e1
+assert e3.cross_product(e1) == e2
+
 def random_scalar(n=3):
     if random.randint(0,100) < 33:
         return GA(n).scalar(random.randint(-5, 5))
     return GA(n).scalar(random.gauss(0, 20))
+
+def random_vector(n=3):
+    bit = 1
+    x = GA(n).scalar(0)
+    while bit < len(x):
+        x[bit] = random_scalar(n)
+        bit *= 2
+    return x
 
 def random_rank():
     return random.randint(0, 3)
@@ -41,7 +56,7 @@ def random_multivector(n=3):
     x = GA(n).scalar(0)
     l = random_len()
     for i  in range(l):
-        x += random_scalar()*random_blade(n)
+        x += random_scalar(n)*random_blade(n)
     return x
 
 def asserteq(a, b):
@@ -364,32 +379,79 @@ for iter in range(100):
     assert(y[0]*x == z)
     
     #test MultiVector.__and__
-
+    x = random_multivector(a)    
+    y = random_multivector(a)
+    asserteq((x&y) + (x@y), x*y)
+    asserteq(x&y, -(y&x))
+    
     #test MultiVector.__matmul__
-
-    #test MultiVector.__or__
-
+    x = random_multivector(a)    
+    y = random_scalar(a)
+    asserteq(x*y, x @ y)
+    y = random_multivector(a)
+    asserteq(x@y, y@x)
+    
+    #test MultiVector.__or__ TODO
+    
     #test MultiVector.__abs__
+    x = random_vector(a)
+    asserteq(abs(x)*abs(x), x @ x)
 
-    #test MultiVector.__invert__
+    #test MultiVector.__invert__ TODO
 
     #test MultiVector.rank
-
+    x = random_vector(a)
+    assert not x or x.rank() == 1
+    assert not x or (x*x).rank() == 2
+    assert not (x+x*x) or (x+x*x).rank() == 2
+    assert not x or (x*x*x).rank() == 3    
+    
     #test MultiVector.cross_product
-
+    x = random_vector(a)
+    y = random_vector(a)
+    z = x.cross_product(y)
+    asserteq(z @ x, 0)
+    asserteq(z @ y, 0)
+    assert not z or z.rank() == 1
+    
     #test MultiVector.left_inv
-
+    x = random_multivector(a)    
+    try:
+        z = x.left_inv()
+        if z is not NotImplemented:
+            asserteq(x*z, one)
+    except(TypeError, ZeroDivisionError):
+        pass
+    
     #test MultiVector.right_inv
-
+    x = random_multivector(a)    
+    try:
+        z = x.right_inv()
+        if z is not NotImplemented:
+            asserteq(z*x, one)
+    except(TypeError, ZeroDivisionError):
+        pass
+    
     #test MultiVector.__truediv__
-
-    #test MultiVector.dual
+    x = random_multivector(a)    
+    y = random_multivector(a)
+    try:
+        z = x/y
+        if z is not NotImplemented:
+            asserteq(z*y, x)
+    except(TypeError, ZeroDivisionError):
+        pass
+    
+    #test MultiVector.dual TODO
 
     #test MultiVector.I
+    x = random_multivector(a)
+    assert x.I == GA(a).I
+    assert x.I*x.I*x.I*x.I == GA(a).scalar(1)
+    
+    #test MultiVector.__str__ TODO
 
-    #test MultiVector.__str__
-
-    #test MultiVector.__repr__
+    #test MultiVector.__repr__ TODO
 
 
 

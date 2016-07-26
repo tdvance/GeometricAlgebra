@@ -271,15 +271,18 @@ geometric algebra.
         if isinstance(other, Number):
             return self * (1.0 / other)
         x = other.left_inv()
+        if x == NotImplemented:
+            return x
         return self * x
     
     def dual(self):
         """
         Return the dual of the multivector.
         """
-        x = self.I()
+        x = self.I
         return self*x*x*x
 
+    @property
     def I(self):
         """
         Return the standard pseudoscalar of the algebra this multivector is in.
